@@ -20,7 +20,7 @@ class Signup extends Component {
             username: "",
             password: "",
             verified: false,
-            userId: null
+            id: null
         };
         this.updateData = this.updateData.bind(this);
     };
@@ -40,13 +40,13 @@ class Signup extends Component {
                 'Content-Type': 'application/json'
             }
         })
-            .then(res => res.json())
-            .then(res => {
-                this.setState({
-                    verified: res.verified,
-                    userId: res.userId,
-                });
-            }).catch(err => console.log(err));
+        .then(res => res.json())
+        .then(res => {
+            this.setState({
+                verified: res.verified,
+                id: res.userId,
+            });
+        }).catch(err => console.log(err));
     };
 
 
@@ -54,7 +54,7 @@ class Signup extends Component {
     render() {
         let pages;
         if (this.state.verified) {
-            return <Redirect to={{ pathname: '/homepage', state: { id: this.state.userId, username: this.state.username } }} />
+            return <Redirect to={{ pathname: '/homepage', state: { id: this.state.id, username: this.state.username } }} />
         } else {
             pages =
                 <div className="signupArea">
@@ -71,7 +71,7 @@ class Signup extends Component {
                           <input className="password" type="password" placeholder="password" onChange={e => { this.setState({ password: e.target.value }) }}></input>
                         </div>
                         <br />
-                          <button className="loginbtn" type="submit" value="createUser" onClick={e => { e.preventDefault(); this.updateData() }}>Sign Up</button>
+                          <button className="loginbtn" type="submit" value="createUser" onClick={e => { e.preventDefault(); this.updateData()}}>Sign Up</button>
                       </form>
                     </div>
                 </div>

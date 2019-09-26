@@ -153,6 +153,7 @@ class TrailPage extends React.Component {
     if (!this.state.isLoggedIn) return <Redirect to="/" />
     return (
       <div>
+      <div className="current-weather">Current weather {weather}&#8457;</div>
       <div className="navbars">
         <div className="navigation">
           <Link className="nav-item" to={{
@@ -184,7 +185,6 @@ class TrailPage extends React.Component {
             </DropdownMenu>
           </Dropdown>
         </div>
-        <div className="current-weather">Current weather {weather}&#8457;</div>
       </div>
 
         <div className="trailpage">

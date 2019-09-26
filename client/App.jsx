@@ -22,9 +22,9 @@ class App extends Component {
             selectedTrail: null,
             comments: [],
             searchInput: '',
-            latitude: 39.0119,
-            longitude: -98.4842,
-            zoom: 3,
+            latitude: 34.0522, // initially set to Los Angeles
+            longitude: -118.2437, // initially set to Los Angeles
+            zoom: 8,
             weatherData: [],
             dropdownOpen: false,
             isLoggedIn: true,
@@ -81,7 +81,6 @@ class App extends Component {
                 })
         })
         .then((res) => {
-          console.log('hellooooo')
             const wUrl = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${darkSky_API_KEY}/${this.state.latitude},${this.state.longitude}`;
             console.log(`wUrl: ${wUrl}`)
             fetch(wUrl)
@@ -99,11 +98,11 @@ class App extends Component {
     // fetches data from REI API and sets to state when the page loads
     componentDidMount() {
 
-            const { id } = this.props.location.state
+            const { id, username } = this.props.location.state
 
             this.setState({
               userId: id,
-              username: this.props.location.state.username
+              username: username
             });
 
             fetch('/data')
@@ -247,7 +246,8 @@ class App extends Component {
 
         if (!this.state.isLoggedIn) return <Redirect to="/" />
         return (
-          <div>
+        <div>
+          <div className="current-weather">Current weather {weather}&#8457;</div>
             <div className="navbars">
               <div className="navigation">
                 <Link className="nav-item" to="/homepage"><img src="../assets/MARKER.png" width="50"></img></Link>
@@ -270,10 +270,8 @@ class App extends Component {
                   </DropdownMenu>
                 </Dropdown>
               </div>
-              <div className="current-weather">Current weather {weather}&#8457;</div>
             </div>
 
-            <div className="search-text">Find Your Trail</div>
             <div className='appContainer'>
               <div id="searchForm">
                 <form onSubmit={this.handleSearchSubmit}>
@@ -282,10 +280,10 @@ class App extends Component {
                     type="text"
                     value={this.state.searchLocation}
                     onChange={this.handleSearchInput}
-                    placeholder="Search Address"
+                    placeholder="Find your trail..."
                   />
                   </label>
-                  <input className="submitButton" type="submit" value="Submit" />
+                  <input className="submitButton" type="submit" value="Search" />
                 </form>
               </div>
                 <MainContainer

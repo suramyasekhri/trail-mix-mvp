@@ -179,7 +179,7 @@ table td a.trail-page-link {
 }
 
 .navigation {
-  padding: 30px 50px 0px 50px;
+  padding: 0px 50px 0px 50px;
 }
 
 .navigation a {
@@ -187,6 +187,10 @@ table td a.trail-page-link {
   text-decoration: none;
   color: black;
   text-transform: uppercase;
+}
+
+.dropdown-menu {
+  border-radius: 0 !important;
 }
 
 .current-weather {
@@ -265,6 +269,7 @@ table#allTrails {
 .nav-content-container {
   min-height: 700px;
   background-color: #fff !important;
+  padding-top: 30px;
 }
 
 td.heart-space, th.heart-space{
@@ -352,10 +357,9 @@ button:active,
 button:hover,
 label:focus,
 .btn:active,
-.btn.active
-{
-    outline:0px !important;
-    -webkit-appearance:none;
+.btn.active {
+    outline: 0px !important;
+    -webkit-appearance: none !important;
     box-shadow: none !important;
 }
 
@@ -380,12 +384,14 @@ label:focus,
   text-align: center;
   background-color: #efefef;
   width: 400px;
-  padding: 27px 0px;
+  padding: 27px 36px;
   margin: 20px;
   border-radius: 4px;
+  font-size: 14px;
 }
 
 .comment-author {
+  padding-top: 18px;
   font-size: 12px;
 }
 

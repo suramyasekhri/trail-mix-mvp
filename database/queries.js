@@ -39,7 +39,7 @@ const createUser = (req, res, next) => {
           pool.query('INSERT INTO users (username, password) VALUES ($1, $2) returning *', [username, hash], (error, results) => {
             if (error) throw error;
             res.locals.verified = true;
-            res.locals.userId = results.rows._id;
+            res.locals.userId = results.rows[0]._id;
             return next();
           });
         });
