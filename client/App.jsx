@@ -69,14 +69,15 @@ class App extends Component {
                 })
         })
         .then((res) => {
-          console.log('hellooooo')
+          //console.log('hellooooo')
+          //weatherupdate
             const wUrl = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${darkSky_API_KEY}/${this.state.latitude},${this.state.longitude}`;
             console.log(`wUrl: ${wUrl}`)
             fetch(wUrl)
                 .then((res) => res.json())
                 .then((res) => {
                     this.setState({ weatherData: res.daily });
-                    console.log(`Weather array info: ${this.state.weatherData.data[0].temperatureMin}`)
+                    //console.log(`Weather array info: ${this.state.weatherData.data[0].temperatureMin}`)
                 })
         })
         this.setState({zoom: 10})
@@ -127,8 +128,6 @@ class App extends Component {
                 };
               });
             })
-
-
     };
 
     //invoked by on-click function in TrailDisplay, sets selected trail in state
