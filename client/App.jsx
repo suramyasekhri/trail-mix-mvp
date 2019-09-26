@@ -20,7 +20,6 @@ class App extends Component {
             trailData: [],
             savedTrails: [],
             selectedTrail: null,
-            isLoggedIn: true,
             comments: [],
             searchInput: '',
             latitude: 39.0119,
@@ -28,6 +27,7 @@ class App extends Component {
             zoom: 3,
             weatherData: [],
             dropdownOpen: false,
+            isLoggedIn: true,
         }
 
       this.getTrail = this.getTrail.bind(this);
@@ -68,7 +68,6 @@ class App extends Component {
         })
         .then((res) => {
             const hUrl = `https://www.hikingproject.com/data/get-trails?lat=${this.state.latitude}&lon=${this.state.longitude}&maxDistance=20&maxResults=100$minStars=3&key=${hikingProject_API_KEY}`
-            console.log('hUrl is: ', hUrl);
             fetch(hUrl)
             .then((res) => res.json())
             .then((res) => {
@@ -78,7 +77,7 @@ class App extends Component {
                         trailData: res.trails
                     }
                 })
-                console.log('this.state.trailData is: ', this.state.trailData)
+                // console.log('this.state.trailData is: ', this.state.trailData)
                 })
         })
         .then((res) => {
@@ -251,13 +250,15 @@ class App extends Component {
           <div>
             <div className="navbars">
               <div className="navigation">
-                <Link className="nav-item" to="/homepage"><img src="../assets/LOGO.png" width="150"></img></Link>
-                <Link className="nav-item" to={{
+                <Link className="nav-item" to="/homepage"><img src="../assets/MARKER.png" width="50"></img></Link>
+                <Link className="nav-item my-favs" to={{
                   pathname: '/favs',
                   state: {
                     userId: this.state.userId,
                     username: this.state.username,
-                    weather: this.state.weatherData
+                    weather: this.state.weatherData,
+                    dropdownOpen: this.state.dropdownOpen,
+                    isLoggedIn: this.state.isLoggedIn
                   }
                 }}>My Favs</ Link>
                 <Dropdown className="nav-item" id="userGreeting" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
@@ -269,10 +270,10 @@ class App extends Component {
                   </DropdownMenu>
                 </Dropdown>
               </div>
-
               <div className="current-weather">Current weather {weather}&#8457;</div>
             </div>
 
+            <div className="search-text">Find Your Trail</div>
             <div className='appContainer'>
               <div id="searchForm">
                 <form onSubmit={this.handleSearchSubmit}>
@@ -300,6 +301,8 @@ class App extends Component {
                   zoom={this.state.zoom}
                   saveTrail={this.saveTrail}
                   removeTrail={this.removeTrail}
+                  dropdownOpen={this.state.dropdownOpen}
+                  isLoggedIn={this.state.isLoggedIn}
                   userId={this.state.userId}
                   username={this.state.username} />
             </div>

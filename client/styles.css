@@ -195,6 +195,12 @@ table td a.trail-page-link {
   font-size: 12px;
 }
 
+.search-text {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
 .nav-item {
   padding-bottom: 0
 }
@@ -398,4 +404,8 @@ label:focus,
 .hiker-username {
   font-size: 12px;
   margin-top: 5px;
+}
+
+.nav-item.my-favs {
+  padding-left: 0px !important;
 }

@@ -1,8 +1,10 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 import Hiker from './components/Hiker.jsx';
 import CommentsDisplay from "./components/CommentsDisplay.jsx";
 import { Input, FormText } from 'reactstrap';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+
 
 
 class TrailPage extends React.Component {
@@ -17,21 +19,27 @@ class TrailPage extends React.Component {
       comments: [],
       username: 'admin',
       weather: [],
+      dropdownOpen: false,
+      isLoggedIn: true,
     }
 
     this.postComment = this.postComment.bind(this);
+    this.toggle = this.toggle.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   componentDidMount () {
 
     const { id } = this.props.match.params;
-    const { username, userId, weather } = this.props.location.state
+    const { username, userId, weather, dropdownOpen, isLoggedIn } = this.props.location.state
 
     this.setState({
       username,
       id,
       userId,
       weather,
+      dropdownOpen,
+      isLoggedIn
     })
 
     fetch('/trail', {
@@ -80,11 +88,18 @@ class TrailPage extends React.Component {
   };
 
 
+  logout(e) {
+    this.setState({isLoggedIn: false})
+  }
+
+  toggle() {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
+  }
+
   //adds comment and author to database and pulls back all comments for specified trail and sets to state
   postComment(id, comment, author) {
-    console.log(comment)
-    console.log(author)
-    console.log(id)
       fetch('/comments', {
           method: 'POST',
           headers: {
@@ -100,7 +115,6 @@ class TrailPage extends React.Component {
           return res.json();
       })
       .then((res) => {
-        console.log(res)
           this.setState(state => {
               return {
                   ...state,
@@ -136,6 +150,7 @@ class TrailPage extends React.Component {
       weather = Math.floor(this.state.weather.data[0].temperatureMin);
     }
 
+    if (!this.state.isLoggedIn) return <Redirect to="/" />
     return (
       <div>
       <div className="navbars">
@@ -145,18 +160,29 @@ class TrailPage extends React.Component {
             state: {
               id: this.state.userId,
               username: this.state.username,
-              weather: this.state.weather
+              weather: this.state.weather,
+              dropdownOpen: this.state.dropdownOpen,
+              isLoggedIn: this.state.isLoggedIn
             }
-          }}><img src="../assets/LOGO.png" width="150"></img></ Link>
-          <Link className="nav-item" to={{
+          }}><img src="../assets/MARKER.png" width="50"></img></ Link>
+          <Link className="nav-item my-favs" to={{
             pathname: '/favs',
             state: {
               userId: this.state.userId,
               username: this.state.username,
-              weather: this.state.weather
+              weather: this.state.weather,
+              dropdownOpen: this.state.dropdownOpen,
+              isLoggedIn: this.state.isLoggedIn
             }
           }}>My Favs</Link>
-          <p className="nav-item" id="userGreeting">Hello, {this.state.username}!</p>
+          <Dropdown className="nav-item" id="userGreeting" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+            <DropdownToggle caret>
+              Hello, {this.state.username}!
+              </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem onClick={(e => this.logout(e))}>Logout</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
         <div className="current-weather">Current weather {weather}&#8457;</div>
       </div>

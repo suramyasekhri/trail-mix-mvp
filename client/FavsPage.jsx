@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
 import { Button, Table, Row } from 'reactstrap'
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+
 
 class FavsPage extends Component {
 
@@ -12,20 +14,26 @@ constructor(props) {
     savedTrails: [],
     hikedTrails: [],
     weather: [],
+    dropdownOpen: false,
+    isLoggedIn: true,
   }
 
   this.hikedTrail = this.hikedTrail.bind(this);
   this.getNumber = this.getNumber.bind(this);
+  this.toggle = this.toggle.bind(this);
+  this.logout = this.logout.bind(this);
 }
 
 componentDidMount() {
 
-  const { userId, username, weather } = this.props.location.state;
+  const { userId, username, weather, dropdownOpen, isLoggedIn } = this.props.location.state;
 
   this.setState({
     userId,
     username,
-    weather
+    weather,
+    dropdownOpen,
+    isLoggedIn
   });
 
   fetch('/favs', {
@@ -50,6 +58,16 @@ componentDidMount() {
       };
     });
   })
+}
+
+logout(e) {
+  this.setState({isLoggedIn: false})
+}
+
+toggle() {
+  this.setState(prevState => ({
+    dropdownOpen: !prevState.dropdownOpen
+  }));
 }
 
 getNumber(word) {
@@ -120,6 +138,7 @@ render() {
       );
   });
 
+   if (!this.state.isLoggedIn) return <Redirect to="/" />
    return (
      <div>
      <div className="navbars">
@@ -129,11 +148,20 @@ render() {
            state: {
              id: this.state.userId,
              username: this.state.username,
-             weather: this.state.weatherData
+             weather: this.state.weatherData,
+             dropdownOpen: this.state.dropdownOpen,
+             isLoggedIn: this.state.isLoggedIn
            }
-         }}><img src="../assets/LOGO.png" width="150"></img></ Link>
-         <Link className="nav-item" to="/favs">My Favs</Link>
-         <p className="nav-item" id="userGreeting">Hello, {this.state.username}!</p>
+         }}><img src="../assets/MARKER.png" width="50"></img></ Link>
+         <Link className="nav-item my-favs" to="/favs">My Favs</Link>
+         <Dropdown className="nav-item" id="userGreeting" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+           <DropdownToggle caret>
+             Hello, {this.state.username}!
+             </DropdownToggle>
+           <DropdownMenu>
+             <DropdownItem onClick={(e => this.logout(e))}>Logout</DropdownItem>
+           </DropdownMenu>
+         </Dropdown>
        </div>
        <div className="current-weather">Current weather {weather}&#8457;</div>
       </div>
