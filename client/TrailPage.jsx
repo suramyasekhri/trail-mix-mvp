@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom
 import Hiker from './components/Hiker.jsx';
 import CommentsDisplay from "./components/CommentsDisplay.jsx";
 import { Input, FormText } from 'reactstrap';
+import ReactAnimatedWeather from 'react-animated-weather';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-
 
 
 class TrailPage extends React.Component {
@@ -21,6 +21,10 @@ class TrailPage extends React.Component {
       weather: [],
       dropdownOpen: false,
       isLoggedIn: true,
+      icon: 'CLEAR_DAY',
+      color: 'black',
+      size: 25,
+      animate: true
     }
 
     this.postComment = this.postComment.bind(this);
@@ -31,7 +35,7 @@ class TrailPage extends React.Component {
   componentDidMount () {
 
     const { id } = this.props.match.params;
-    const { username, userId, weather, dropdownOpen, isLoggedIn } = this.props.location.state
+    const { icon, username, userId, weather, dropdownOpen, isLoggedIn } = this.props.location.state
 
     this.setState({
       username,
@@ -39,7 +43,8 @@ class TrailPage extends React.Component {
       userId,
       weather,
       dropdownOpen,
-      isLoggedIn
+      isLoggedIn,
+      icon,
     })
 
     fetch('/trail', {
@@ -153,7 +158,14 @@ class TrailPage extends React.Component {
     if (!this.state.isLoggedIn) return <Redirect to="/" />
     return (
       <div>
-      <div className="current-weather">Current weather {weather}&#8457;</div>
+      <div className="current-weather">
+          <ReactAnimatedWeather
+            icon={this.state.icon}
+            color={this.state.color}
+            size={this.state.size}
+            animate={this.state.animate}
+        /> <div className="weather-number">{weather}&#8457;</div>
+      </div>
       <div className="navbars">
         <div className="navigation">
           <Link className="nav-item" to={{
@@ -163,7 +175,8 @@ class TrailPage extends React.Component {
               username: this.state.username,
               weather: this.state.weather,
               dropdownOpen: this.state.dropdownOpen,
-              isLoggedIn: this.state.isLoggedIn
+              isLoggedIn: this.state.isLoggedIn,
+              icon: this.state.icon
             }
           }}><img src="../assets/MARKER.png" width="50"></img></ Link>
           <Link className="nav-item my-favs" to={{
@@ -173,7 +186,8 @@ class TrailPage extends React.Component {
               username: this.state.username,
               weather: this.state.weather,
               dropdownOpen: this.state.dropdownOpen,
-              isLoggedIn: this.state.isLoggedIn
+              isLoggedIn: this.state.isLoggedIn,
+              icon: this.state.icon
             }
           }}>My Favs</Link>
           <Dropdown className="nav-item" id="userGreeting" isOpen={this.state.dropdownOpen} toggle={this.toggle}>

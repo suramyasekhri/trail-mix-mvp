@@ -48,7 +48,8 @@ class ListContainer extends Component {
                         userId: this.props.userId,
                         weather: this.props.weatherData,
                         dropdownOpen: this.props.dropdownOpen,
-                        isLoggedIn: this.props.isLoggedIn
+                        isLoggedIn: this.props.isLoggedIn,
+                        icon: this.props.icon
                       }
                     }} className="trail-page-link">{trail.name}</ Link></td>
                     <td>{trail.location}</td>
