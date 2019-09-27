@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
 import { Button, Table, Row } from 'reactstrap'
+import ReactAnimatedWeather from 'react-animated-weather';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 
@@ -16,6 +17,10 @@ constructor(props) {
     weather: [],
     dropdownOpen: false,
     isLoggedIn: true,
+    icon: 'CLEAR_DAY',
+    color: 'black',
+    size: 25,
+    animate: true
   }
 
   this.hikedTrail = this.hikedTrail.bind(this);
@@ -26,14 +31,15 @@ constructor(props) {
 
 componentDidMount() {
 
-  const { userId, username, weather, dropdownOpen, isLoggedIn } = this.props.location.state;
+  const { icon, userId, username, weather, dropdownOpen, isLoggedIn } = this.props.location.state;
 
   this.setState({
     userId,
     username,
     weather,
     dropdownOpen,
-    isLoggedIn
+    isLoggedIn,
+    icon
   });
 
   fetch('/favs', {
@@ -141,6 +147,14 @@ render() {
    if (!this.state.isLoggedIn) return <Redirect to="/" />
    return (
      <div>
+     <div className="current-weather">
+         <ReactAnimatedWeather
+           icon={this.state.icon}
+           color={this.state.color}
+           size={this.state.size}
+           animate={this.state.animate}
+       /> <div className="weather-number">{weather}&#8457;</div>
+     </div>
      <div className="navbars">
        <div className="navigation">
          <Link className="nav-item" to={{
@@ -148,9 +162,10 @@ render() {
            state: {
              id: this.state.userId,
              username: this.state.username,
-             weather: this.state.weatherData,
+             weather: this.state.weather,
              dropdownOpen: this.state.dropdownOpen,
-             isLoggedIn: this.state.isLoggedIn
+             isLoggedIn: this.state.isLoggedIn,
+             icon: this.state.icon,
            }
          }}><img src="../assets/MARKER.png" width="50"></img></ Link>
          <Link className="nav-item my-favs" to="/favs">My Favs</Link>
@@ -163,7 +178,6 @@ render() {
            </DropdownMenu>
          </Dropdown>
        </div>
-       <div className="current-weather">Current weather {weather}&#8457;</div>
       </div>
 
        <div className = "getUserTrails">

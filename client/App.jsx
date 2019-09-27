@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MainContainer from "./containers/MainContainer.jsx";
 import { BrowserRouter as Router, Route, Switch, Link, Redirect} from "react-router-dom";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import ReactAnimatedWeather from 'react-animated-weather';
 
 const googleMapsUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
 const googleMaps_API_KEY = 'AIzaSyAgJUQeWjM55IdJbPXVRa3i-5N6uLvptI8';
@@ -22,12 +23,16 @@ class App extends Component {
             selectedTrail: null,
             comments: [],
             searchInput: '',
-            latitude: 39.0119,
-            longitude: -98.4842,
-            zoom: 3,
+            latitude: 34.0522, // initially set to Los Angeles
+            longitude: -118.2437, // initially set to Los Angeles
+            zoom: 8,
             weatherData: [],
             dropdownOpen: false,
             isLoggedIn: true,
+            icon: 'CLEAR_DAY',
+            color: 'black',
+            size: 25,
+            animate: true
         }
 
       this.getTrail = this.getTrail.bind(this);
@@ -77,10 +82,10 @@ class App extends Component {
                         trailData: res.trails
                     }
                 })
-                // console.log('this.state.trailData is: ', this.state.trailData)
-                })
+            })
         })
         .then((res) => {
+<<<<<<< HEAD
           //console.log('hellooooo')
           //weatherupdate
             const wUrl = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${darkSky_API_KEY}/${this.state.latitude},${this.state.longitude}`;
@@ -93,6 +98,29 @@ class App extends Component {
                 })
         })
         this.setState({zoom: 10})
+=======
+           const wUrl = `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${darkSky_API_KEY}/${this.state.latitude},${this.state.longitude}`;
+           console.log(`wUrl: ${wUrl}`)
+           fetch(wUrl)
+               .then((res) => res.json())
+               .then((res) => {
+                 let icon = res.daily.data[0].icon;
+                 let iconArray = icon.split('');
+                 let newIconStr = iconArray.reduce((str, char) => {
+                   if (char === '-') {
+                     str += '_';
+                     return str;
+                   }
+                   str += char;
+                   return str;
+                 }, '')
+                 let upperIcon = newIconStr.toUpperCase()
+                 this.setState({ weatherData: res.daily, icon: upperIcon });
+                 console.log(`Weather array info: ${this.state.icon}`)
+               })
+       })
+      this.setState({zoom: 10})
+>>>>>>> 6260e284217bcf72c032d54deb4f56d995e31e1c
     }
 
 
@@ -100,11 +128,13 @@ class App extends Component {
     // fetches data from REI API and sets to state when the page loads
     componentDidMount() {
 
-            const { id } = this.props.location.state
+            const { id, username, icon, weather } = this.props.location.state
 
             this.setState({
               userId: id,
-              username: this.props.location.state.username
+              username: username,
+              icon: icon,
+              // weatherData: weatherData,
             });
 
             fetch('/data')
@@ -240,13 +270,22 @@ class App extends Component {
     render() {
 
         let weather = 70;
+
         if (this.state.weatherData.length !== 0) {
           weather = Math.floor(this.state.weatherData.data[0].temperatureMin);
         }
 
         if (!this.state.isLoggedIn) return <Redirect to="/" />
         return (
-          <div>
+        <div>
+            <div className="current-weather">
+                <ReactAnimatedWeather
+                  icon={this.state.icon}
+                  color={this.state.color}
+                  size={this.state.size}
+                  animate={this.state.animate}
+              /> <div className="weather-number">{weather}&#8457;</div>
+            </div>
             <div className="navbars">
               <div className="navigation">
                 <Link className="nav-item" to="/homepage"><img src="../assets/MARKER.png" width="50"></img></Link>
@@ -257,7 +296,8 @@ class App extends Component {
                     username: this.state.username,
                     weather: this.state.weatherData,
                     dropdownOpen: this.state.dropdownOpen,
-                    isLoggedIn: this.state.isLoggedIn
+                    isLoggedIn: this.state.isLoggedIn,
+                    icon: this.state.icon
                   }
                 }}>My Favs</ Link>
                 <Dropdown className="nav-item" id="userGreeting" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
@@ -269,10 +309,8 @@ class App extends Component {
                   </DropdownMenu>
                 </Dropdown>
               </div>
-              <div className="current-weather">Current weather {weather}&#8457;</div>
             </div>
 
-            <div className="search-text">Find Your Trail</div>
             <div className='appContainer'>
               <div id="searchForm">
                 <form onSubmit={this.handleSearchSubmit}>
@@ -281,10 +319,10 @@ class App extends Component {
                     type="text"
                     value={this.state.searchLocation}
                     onChange={this.handleSearchInput}
-                    placeholder="Search Address"
+                    placeholder="Find your trail..."
                   />
                   </label>
-                  <input className="submitButton" type="submit" value="Submit" />
+                  <input className="submitButton" type="submit" value="Search" />
                 </form>
               </div>
                 <MainContainer
@@ -294,6 +332,7 @@ class App extends Component {
                   weatherData={this.state.weatherData}
                   trailData={this.state.trailData}
                   getTrail={this.getTrail}
+                  icon={this.state.icon}
                   selectedTrail={this.state.selectedTrail}
                   displayTrail={this.displayTrail}
                   savedTrails={this.state.savedTrails}

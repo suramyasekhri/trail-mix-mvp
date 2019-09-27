@@ -179,7 +179,7 @@ table td a.trail-page-link {
 }
 
 .navigation {
-  padding: 30px 50px 0px 50px;
+  padding: 0px 50px 0px 50px;
 }
 
 .navigation a {
@@ -189,10 +189,21 @@ table td a.trail-page-link {
   text-transform: uppercase;
 }
 
+.dropdown-menu {
+  border-radius: 0 !important;
+}
+
 .current-weather {
   text-align: right;
   padding-right: 69px;
-  font-size: 12px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.weather-number {
+  padding-left: 7px
 }
 
 .search-text {
@@ -265,6 +276,7 @@ table#allTrails {
 .nav-content-container {
   min-height: 700px;
   background-color: #fff !important;
+  padding-top: 30px;
 }
 
 td.heart-space, th.heart-space{
@@ -352,12 +364,25 @@ button:active,
 button:hover,
 label:focus,
 .btn:active,
-.btn.active
-{
-    outline:0px !important;
-    -webkit-appearance:none;
-    box-shadow: none !important;
+.btn.active {
+    outline: 0px !important;
+    -webkit-appearance: blue !important;
+    box-shadow: blue !important;
 }
+
+.marker-btn {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.mapboxgl-popup-content {
+    position: relative;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 30px 14px 22px !important;
+    pointer-events: auto;
+  }
 
 .form-control:focus {
   border-color: #2e9383 !important;
@@ -380,12 +405,14 @@ label:focus,
   text-align: center;
   background-color: #efefef;
   width: 400px;
-  padding: 27px 0px;
+  padding: 27px 36px;
   margin: 20px;
   border-radius: 4px;
+  font-size: 14px;
 }
 
 .comment-author {
+  padding-top: 18px;
   font-size: 12px;
 }
 
