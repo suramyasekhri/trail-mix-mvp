@@ -1,7 +1,10 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom'
 import Hiker from './components/Hiker.jsx';
 import CommentsDisplay from "./components/CommentsDisplay.jsx";
+import { Input, FormText } from 'reactstrap';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+
 
 
 class TrailPage extends React.Component {
@@ -16,21 +19,27 @@ class TrailPage extends React.Component {
       comments: [],
       username: 'admin',
       weather: [],
+      dropdownOpen: false,
+      isLoggedIn: true,
     }
 
     this.postComment = this.postComment.bind(this);
+    this.toggle = this.toggle.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   componentDidMount () {
 
     const { id } = this.props.match.params;
-    const { username, userId, weather } = this.props.location.state
+    const { username, userId, weather, dropdownOpen, isLoggedIn } = this.props.location.state
 
     this.setState({
       username,
       id,
       userId,
       weather,
+      dropdownOpen,
+      isLoggedIn
     })
 
     fetch('/trail', {
@@ -79,6 +88,16 @@ class TrailPage extends React.Component {
   };
 
 
+  logout(e) {
+    this.setState({isLoggedIn: false})
+  }
+
+  toggle() {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
+  }
+
   //adds comment and author to database and pulls back all comments for specified trail and sets to state
   postComment(id, comment, author) {
       fetch('/comments', {
@@ -115,8 +134,7 @@ class TrailPage extends React.Component {
     let allHikers;
 
     if (comments.length !== 0) {
-
-      allComments = comments.map((x, index) => {
+      allComments = comments.slice(0).reverse().map((x, index) => {
           return <CommentsDisplay key={index} comment={x.comment} author={x.author} />
       })
     }
@@ -132,6 +150,7 @@ class TrailPage extends React.Component {
       weather = Math.floor(this.state.weather.data[0].temperatureMin);
     }
 
+    if (!this.state.isLoggedIn) return <Redirect to="/" />
     return (
       <div>
       <div className="navbars">
@@ -141,18 +160,29 @@ class TrailPage extends React.Component {
             state: {
               id: this.state.userId,
               username: this.state.username,
-              weather: this.state.weather
+              weather: this.state.weather,
+              dropdownOpen: this.state.dropdownOpen,
+              isLoggedIn: this.state.isLoggedIn
             }
-          }}>Trail Mix</ Link>
-          <Link className="nav-item" to={{
+          }}><img src="../assets/MARKER.png" width="50"></img></ Link>
+          <Link className="nav-item my-favs" to={{
             pathname: '/favs',
             state: {
               userId: this.state.userId,
               username: this.state.username,
-              weather: this.state.weather
+              weather: this.state.weather,
+              dropdownOpen: this.state.dropdownOpen,
+              isLoggedIn: this.state.isLoggedIn
             }
           }}>My Favs</Link>
-          <p className="nav-item" id="userGreeting">Hello, {this.state.username}!</p>
+          <Dropdown className="nav-item" id="userGreeting" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+            <DropdownToggle caret>
+              Hello, {this.state.username}!
+              </DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem onClick={(e => this.logout(e))}>Logout</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
         <div className="current-weather">Current weather {weather}&#8457;</div>
       </div>
@@ -170,14 +200,12 @@ class TrailPage extends React.Component {
                     {name}
                   </div>
 
-                  <p>{summary}</p>
-
                   <div className="trail-detail">
                     <span>{location}</span>
                   </div>
 
                   <div className="trail-detail">
-                    <span><a href={url}>More info</a></span>
+                    <span>{summary}</span>
                   </div>
 
                   <div className="trail-detail">
@@ -188,30 +216,32 @@ class TrailPage extends React.Component {
                     <span>{length} miles</span>
                   </div>
 
-                  <p>Hikers</p>
-                  <div>{ allHikers }</div>
-
-
+                  {allHikers &&
+                  <div className="hiker-list">
+                    <div className="hiker-header"><span>Previous Hikers</span></div>
+                    <div>{ allHikers }</div>
+                  </div>
+                  }
               </div>
             </div>
           </div>
 
           <div className = "commentbox">
-              <input type="textarea" name="comment" id="commentForm"></input>
-              <button
+              <Input type="textarea" name="comment" id="commentForm" /><br />
+              <div
                 value="Submit"
-                id={id}
+                className="commentSubmit"
                 onClick={(e) => {
                   const comment = document.getElementById('commentForm').value;
-                  this.postComment(e.target.id, comment, username)
+                  this.postComment(id, comment, username)
                   document.getElementById('commentForm').value = '';
               }}>
                 Submit
-                </button>
+              </div>
+
             </div>
           </div>
-          <div>{ allComments }</div>
-
+          <div className="comments-section">{ allComments }</div>
       </div>
     )
   }

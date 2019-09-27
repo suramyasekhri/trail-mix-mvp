@@ -23,6 +23,8 @@ class MainContainer extends Component {
                 <ListContainer
                   trailData={this.props.trailData}
                   getTrail={this.props.getTrail}
+                  dropdownOpen={this.props.dropdownOpen}
+                  isLoggedIn={this.props.isLoggedIn}
                   showKey={this.props.showKey}
                   saveTrail={this.props.saveTrail}
                   removeTrail={this.props.removeTrail}

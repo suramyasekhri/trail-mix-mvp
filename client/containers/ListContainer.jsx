@@ -46,7 +46,9 @@ class ListContainer extends Component {
                       state: {
                         username: this.props.username,
                         userId: this.props.userId,
-                        weather: this.props.weatherData
+                        weather: this.props.weatherData,
+                        dropdownOpen: this.props.dropdownOpen,
+                        isLoggedIn: this.props.isLoggedIn
                       }
                     }} className="trail-page-link">{trail.name}</ Link></td>
                     <td>{trail.location}</td>

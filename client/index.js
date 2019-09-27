@@ -20,7 +20,7 @@ import SimpleStorage from "react-simple-storage";
 import '!style-loader!css-loader!bootstrap/dist/css/bootstrap.css';
 
 
-//uses ReactRouter to route the paths for login, signup, and homepage
+// uses ReactRouter to route the paths for login, signup, and homepage
 render(
     <div>
         <Router>

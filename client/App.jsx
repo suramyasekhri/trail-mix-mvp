@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MainContainer from "./containers/MainContainer.jsx";
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link, Redirect} from "react-router-dom";
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 const googleMapsUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
 const googleMaps_API_KEY = 'AIzaSyAgJUQeWjM55IdJbPXVRa3i-5N6uLvptI8';
@@ -19,13 +20,14 @@ class App extends Component {
             trailData: [],
             savedTrails: [],
             selectedTrail: null,
-            isLoggedIn: true,
             comments: [],
             searchInput: '',
             latitude: 39.0119,
             longitude: -98.4842,
             zoom: 3,
             weatherData: [],
+            dropdownOpen: false,
+            isLoggedIn: true,
         }
 
       this.getTrail = this.getTrail.bind(this);
@@ -34,8 +36,19 @@ class App extends Component {
       this.displayTrail = this.displayTrail.bind(this);
       this.handleSearchInput = this.handleSearchInput.bind(this);
       this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+      this.toggle = this.toggle.bind(this);
 
     };
+
+    logout(e) {
+      this.setState({isLoggedIn: false})
+    }
+
+    toggle() {
+      this.setState(prevState => ({
+        dropdownOpen: !prevState.dropdownOpen
+      }));
+    }
 
     handleSearchInput(e) {
         let input = e.target.value;
@@ -55,7 +68,6 @@ class App extends Component {
         })
         .then((res) => {
             const hUrl = `https://www.hikingproject.com/data/get-trails?lat=${this.state.latitude}&lon=${this.state.longitude}&maxDistance=20&maxResults=100$minStars=3&key=${hikingProject_API_KEY}`
-            console.log('hUrl is: ', hUrl);
             fetch(hUrl)
             .then((res) => res.json())
             .then((res) => {
@@ -65,7 +77,7 @@ class App extends Component {
                         trailData: res.trails
                     }
                 })
-                console.log('this.state.trailData is: ', this.state.trailData)
+                // console.log('this.state.trailData is: ', this.state.trailData)
                 })
         })
         .then((res) => {
@@ -232,25 +244,35 @@ class App extends Component {
           weather = Math.floor(this.state.weatherData.data[0].temperatureMin);
         }
 
-        if (!this.state.isLoggedIn) return <Redirect to="/login" />
+        if (!this.state.isLoggedIn) return <Redirect to="/" />
         return (
           <div>
             <div className="navbars">
               <div className="navigation">
-                <Link className="nav-item" to="/homepage">Trail Mix</Link>
-                <Link className="nav-item" to={{
+                <Link className="nav-item" to="/homepage"><img src="../assets/MARKER.png" width="50"></img></Link>
+                <Link className="nav-item my-favs" to={{
                   pathname: '/favs',
                   state: {
                     userId: this.state.userId,
                     username: this.state.username,
-                    weather: this.state.weatherData
+                    weather: this.state.weatherData,
+                    dropdownOpen: this.state.dropdownOpen,
+                    isLoggedIn: this.state.isLoggedIn
                   }
                 }}>My Favs</ Link>
-                <p className="nav-item" id="userGreeting">Hello, {this.state.username}!</p>
+                <Dropdown className="nav-item" id="userGreeting" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+                  <DropdownToggle caret>
+                    Hello, {this.state.username}!
+                    </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem onClick={(e => this.logout(e))}>Logout</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
               </div>
               <div className="current-weather">Current weather {weather}&#8457;</div>
             </div>
 
+            <div className="search-text">Find Your Trail</div>
             <div className='appContainer'>
               <div id="searchForm">
                 <form onSubmit={this.handleSearchSubmit}>
@@ -278,6 +300,8 @@ class App extends Component {
                   zoom={this.state.zoom}
                   saveTrail={this.saveTrail}
                   removeTrail={this.removeTrail}
+                  dropdownOpen={this.state.dropdownOpen}
+                  isLoggedIn={this.state.isLoggedIn}
                   userId={this.state.userId}
                   username={this.state.username} />
             </div>
