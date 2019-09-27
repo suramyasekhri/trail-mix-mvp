@@ -119,7 +119,7 @@ class App extends Component {
               userId: id,
               username: username,
               icon: icon,
-              weatherData: weather,
+              // weatherData: weatherData,
             });
 
             fetch('/data')
